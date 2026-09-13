@@ -57,7 +57,8 @@
   <div class="wrap">
     <div class="contact-grid">
       <div>
-        <form name="enquiry" method="post" action="#">
+        <form name="enquiry" method="POST" action="https://formspree.io/f/mykqjgwo" id="enquiryForm">
+          <input type="hidden" name="_subject" value="New enquiry — Computer Geeks website">
           <div class="field"><label for="n">Your name</label><input id="n" name="name" type="text" autocomplete="name" required></div>
           <div class="field"><label for="b">Business</label><input id="b" name="business" type="text" autocomplete="organization"></div>
           <div class="field"><label for="e">Email</label><input id="e" name="email" type="email" autocomplete="email" required></div>
@@ -73,6 +74,7 @@
           </div>
           <div class="field"><label for="m">What's taking up your time?</label><textarea id="m" name="message"></textarea></div>
           <button class="btn btn-go" type="submit">Send enquiry</button>
+          <p id="formStatus" role="status" style="margin:14px 0 0;font-size:.92rem"></p>
         </form>
       </div>
       <div>

@@ -2,6 +2,37 @@
   var yr = document.getElementById('yr');
   if (yr) yr.textContent = new Date().getFullYear();
 
+  var form = document.getElementById('enquiryForm');
+  var status = document.getElementById('formStatus');
+  if (form && status) {
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      status.style.color = 'var(--muted)';
+      status.textContent = 'Sending…';
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      }).then(function(res){
+        if (res.ok) {
+          form.reset();
+          status.style.color = 'var(--green)';
+          status.textContent = "Thanks — we've got it and will be in touch shortly.";
+        } else {
+          status.style.color = 'var(--amber)';
+          status.textContent = 'Something went wrong sending that. Try WhatsApp or email instead.';
+        }
+      }).catch(function(){
+        status.style.color = 'var(--amber)';
+        status.textContent = 'Something went wrong sending that. Try WhatsApp or email instead.';
+      }).finally(function(){
+        btn.disabled = false;
+      });
+    });
+  }
+
   var btn = document.getElementById('menuBtn'), nav = document.getElementById('nav');
   if (btn && nav) {
     btn.addEventListener('click', function(){
