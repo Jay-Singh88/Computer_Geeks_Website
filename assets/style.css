@@ -53,7 +53,7 @@ img{max-width:100%;display:block}
 .btn-go:hover{background:#54EA96}
 .btn-ghost{border-color:var(--line);color:var(--bone)}
 .btn-ghost:hover{border-color:var(--green-deep);color:var(--green)}
-.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:26px}
 
 /* ---------- hero ---------- */
 .hero{padding:78px 0 64px;border-bottom:1px solid var(--line)}
