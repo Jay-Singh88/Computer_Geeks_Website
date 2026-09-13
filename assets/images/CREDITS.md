@@ -1,6 +1,6 @@
 # Stock photo credits
 
-Placeholder photography from Unsplash (free license, no attribution required). Swap any of these for real photos of the shop/team/products whenever ready — just replace the file, keep the same filename, and every page updates automatically.
+Placeholder photography from Unsplash (free license, no attribution required). Swap any of these for real photos whenever ready — just replace the file, keep the same filename, and every page updates automatically.
 
 | File | Source |
 |---|---|
@@ -8,7 +8,4 @@ Placeholder photography from Unsplash (free license, no attribution required). S
 | automation.jpg | https://images.unsplash.com/photo-1454165804606-c3d57bc86b40 |
 | security.jpg | https://images.unsplash.com/photo-1695668548342-c0c1ad479aee |
 | websites.jpg | https://images.unsplash.com/photo-1754548930550-be9fa88874f4 |
-| workshop-repair.jpg | https://images.unsplash.com/photo-1721333089073-215a56fd710c |
-| workshop-build.jpg | https://images.unsplash.com/photo-1604754742629-3e5728249d73 |
-| about-storefront.jpg | https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d |
 | contact-team.jpg | https://images.unsplash.com/photo-1629904853716-f0bc54eea481 |
