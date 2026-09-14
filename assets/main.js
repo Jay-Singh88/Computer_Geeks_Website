@@ -11,9 +11,15 @@
       btn.disabled = true;
       status.style.color = 'var(--muted)';
       status.textContent = 'Sending…';
+      var formData = new FormData(form);
+      fetch('/api/form-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      }).catch(function(){});
       fetch(form.action, {
         method: 'POST',
-        body: new FormData(form),
+        body: formData,
         headers: { 'Accept': 'application/json' }
       }).then(function(res){
         if (res.ok) {
