@@ -10,11 +10,13 @@ module.exports = async (req, res) => {
   }
 
   const { triggerEvent, payload } = req.body || {};
+  const REVIEW_LINK = 'https://g.page/r/CRjP0XnL8hifEBM/review';
 
   const known = {
     BOOKING_CREATED: { icon: '📅', label: 'New booking' },
     BOOKING_CANCELLED: { icon: '❌', label: 'Booking cancelled' },
-    BOOKING_RESCHEDULED: { icon: '🔄', label: 'Booking rescheduled' }
+    BOOKING_RESCHEDULED: { icon: '🔄', label: 'Booking rescheduled' },
+    MEETING_ENDED: { icon: '✅', label: 'Session complete' }
   };
 
   const info = known[triggerEvent];
@@ -41,6 +43,12 @@ module.exports = async (req, res) => {
   ];
   if (attendee) lines.push(`Who: ${attendee.name} (${attendee.email})`);
   if (attendee && attendee.phone) lines.push(`Phone: ${attendee.phone}`);
+
+  if (triggerEvent === 'MEETING_ENDED') {
+    const firstName = attendee && attendee.name ? attendee.name.split(' ')[0] : 'there';
+    const draft = `Hi ${firstName}, thanks for the session today! If you have 30 seconds, a quick Google review would really help us out: ${REVIEW_LINK}`;
+    lines.push('', '⭐ Ask for a review now, while it\'s fresh — copy & send:', '---', draft, '---');
+  }
 
   await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
