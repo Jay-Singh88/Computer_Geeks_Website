@@ -230,6 +230,9 @@
     }).catch(function (err) {
       formStatus.style.color = 'var(--amber)';
       formStatus.textContent = err.message;
+      // The invoice may have transitioned to "sent" even if the request errored
+      // (e.g. the email provider failed after the status update) - refresh to be sure.
+      return loadInvoice().catch(function () {});
     }).finally(function () {
       btn.disabled = false;
     });
