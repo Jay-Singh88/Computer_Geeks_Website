@@ -48,7 +48,7 @@ img{max-width:100%;display:block}
 .menu-btn{display:none;margin-left:auto;background:none;border:1px solid var(--line);color:var(--bone);padding:9px 13px;border-radius:var(--r);font:600 .9rem/1 "IBM Plex Sans",sans-serif}
 
 /* ---------- buttons ---------- */
-.btn{display:inline-block;padding:13px 22px;border-radius:var(--r);font-weight:600;font-size:.97rem;text-decoration:none;border:1px solid transparent}
+.btn{display:inline-block;padding:13px 22px;border-radius:var(--r);font-weight:600;font-size:.97rem;text-decoration:none;border:1px solid transparent;background:transparent;font-family:inherit;cursor:pointer}
 .btn-go{background:var(--green);color:#02150B}
 .btn-go:hover{background:#54EA96}
 .btn-ghost{border-color:var(--line);color:var(--bone)}
