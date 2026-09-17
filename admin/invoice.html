@@ -170,7 +170,9 @@
       document.getElementById('taxRate').value = invoice.tax_rate_percent;
       document.getElementById('notes').value = invoice.notes || '';
       lineItems.innerHTML = '';
-      (data.items || []).forEach(addRow);
+      (data.items || []).forEach(function (item) {
+        addRow({ description: item.description, quantity: item.quantity, unitPriceCents: item.unit_price_cents });
+      });
       if (lineItems.children.length === 0) addRow();
       return loadClients(invoice.client_id).then(function () {
         applyStatusUI(invoice);
