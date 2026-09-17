@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /invoice
 
 Sitemap: https://www.thegeeks.co.in/sitemap.xml

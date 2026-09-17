@@ -1,0 +1,9 @@
+{
+  "name": "computer-geeks-website",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "stripe": "^17.4.0"
+  }
+}

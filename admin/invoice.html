@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice | Computer Geeks Admin</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#05100B">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/admin.css">
+</head>
+<body>
+<header class="masthead admin-bar">
+  <div class="wrap bar">
+    <a class="brand" href="/">COMPUTER <span>GEEKS</span></a>
+    <nav class="tools">
+      <a class="link" href="/admin">Invoices</a>
+      <a class="link" href="/admin/clients">Clients</a>
+      <a class="link" href="#" id="logoutBtn">Log out</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="admin-main">
+  <div class="wrap">
+    <div class="admin-head">
+      <h1 id="pageTitle">New invoice</h1>
+      <span id="statusBadge"></span>
+    </div>
+
+    <form id="invoiceForm">
+      <div class="two-col">
+        <div class="field">
+          <label for="client">Client</label>
+          <select id="client" required></select>
+          <p style="margin:6px 0 0;font-size:.85rem;color:var(--muted)">Need someone new? <a href="/admin/clients" target="_blank">Add a client</a>, then refresh this page.</p>
+        </div>
+        <div class="field">
+          <label for="currency">Currency</label>
+          <select id="currency">
+            <option value="INR" selected>INR — Indian Rupee</option>
+            <option value="NZD">NZD — New Zealand Dollar</option>
+            <option value="USD">USD — US Dollar</option>
+            <option value="AUD">AUD — Australian Dollar</option>
+            <option value="GBP">GBP — British Pound</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field"><label for="dueDate">Due date</label><input id="dueDate" type="date" required></div>
+        <div class="field"><label for="taxRate">Tax / GST rate (%)</label><input id="taxRate" type="number" min="0" step="0.01" value="0"></div>
+      </div>
+
+      <label>Line items</label>
+      <div class="line-item-head"><span>Description</span><span>Qty</span><span>Unit price</span><span></span></div>
+      <div class="line-items" id="lineItems"></div>
+      <button type="button" class="btn btn-ghost" id="addLine">+ Add line item</button>
+
+      <div class="totals-box">
+        <div class="row"><span>Subtotal</span><span id="subtotalOut">—</span></div>
+        <div class="row"><span>Tax</span><span id="taxOut">—</span></div>
+        <div class="row total"><span>Total</span><span id="totalOut">—</span></div>
+      </div>
+
+      <div class="field" style="margin-top:20px"><label for="notes">Notes (shown to the client)</label><textarea id="notes"></textarea></div>
+
+      <p id="formStatus" role="status" style="font-size:.92rem"></p>
+
+      <div class="form-actions">
+        <button class="btn btn-go" type="submit" id="saveBtn">Save draft</button>
+        <button class="btn btn-ghost" type="button" id="sendBtn" hidden>Send to client</button>
+        <button class="btn btn-danger" type="button" id="voidBtn" hidden>Void invoice</button>
+        <a class="btn btn-ghost" id="viewLink" href="#" target="_blank" hidden>View public invoice</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script src="/assets/admin.js"></script>
+<script>
+(function () {
+  var invoiceId = new URLSearchParams(location.search).get('id');
+  var status = 'draft';
+  var lineItems = document.getElementById('lineItems');
+  var clientSelect = document.getElementById('client');
+  var form = document.getElementById('invoiceForm');
+  var formStatus = document.getElementById('formStatus');
+
+  function rowTemplate(item) {
+    item = item || { description: '', quantity: 1, unitPriceCents: 0 };
+    var row = document.createElement('div');
+    row.className = 'line-item-row';
+    row.innerHTML =
+      '<input class="li-desc" placeholder="What did you do?" value="' + CGAdmin.escapeHtml(item.description || '') + '">' +
+      '<input class="li-qty" type="number" min="0.01" step="0.01" value="' + (item.quantity || 1) + '">' +
+      '<input class="li-price" type="number" min="0" step="0.01" value="' + ((item.unitPriceCents || 0) / 100) + '">' +
+      '<button type="button" class="remove" aria-label="Remove line">×</button>';
+    row.querySelector('.remove').addEventListener('click', function () { row.remove(); recalc(); });
+    row.querySelector('.li-qty').addEventListener('input', recalc);
+    row.querySelector('.li-price').addEventListener('input', recalc);
+    return row;
+  }
+
+  function addRow(item) { lineItems.appendChild(rowTemplate(item)); }
+  document.getElementById('addLine').addEventListener('click', function () { addRow(); });
+
+  function readItems() {
+    return Array.from(lineItems.querySelectorAll('.line-item-row')).map(function (row) {
+      return {
+        description: row.querySelector('.li-desc').value.trim(),
+        quantity: parseFloat(row.querySelector('.li-qty').value) || 0,
+        unitPriceCents: Math.round((parseFloat(row.querySelector('.li-price').value) || 0) * 100)
+      };
+    }).filter(function (item) { return item.description || item.quantity !== 1 || item.unitPriceCents !== 0; });
+  }
+
+  function recalc() {
+    var currency = document.getElementById('currency').value;
+    var taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+    var items = readItems();
+    var subtotalCents = items.reduce(function (sum, item) { return sum + Math.round(item.quantity * item.unitPriceCents); }, 0);
+    var taxCents = Math.round(subtotalCents * taxRate / 100);
+    document.getElementById('subtotalOut').textContent = CGAdmin.formatMoney(subtotalCents, currency);
+    document.getElementById('taxOut').textContent = CGAdmin.formatMoney(taxCents, currency);
+    document.getElementById('totalOut').textContent = CGAdmin.formatMoney(subtotalCents + taxCents, currency);
+  }
+  document.getElementById('taxRate').addEventListener('input', recalc);
+  document.getElementById('currency').addEventListener('change', recalc);
+
+  function setReadOnly(readOnly) {
+    Array.from(form.querySelectorAll('input, select, textarea, #addLine')).forEach(function (el) { el.disabled = readOnly; });
+    Array.from(lineItems.querySelectorAll('.remove')).forEach(function (el) { el.disabled = readOnly; });
+    document.getElementById('saveBtn').hidden = readOnly;
+  }
+
+  function applyStatusUI(invoice) {
+    status = invoice.status;
+    document.getElementById('statusBadge').innerHTML = CGAdmin.statusBadge(invoice);
+    document.getElementById('sendBtn').hidden = status === 'void' || status === 'paid';
+    document.getElementById('sendBtn').textContent = status === 'draft' ? 'Send to client' : 'Resend email';
+    document.getElementById('voidBtn').hidden = status === 'void' || status === 'paid';
+    var viewLink = document.getElementById('viewLink');
+    if (status !== 'draft') {
+      viewLink.hidden = false;
+      viewLink.href = '/invoice?t=' + invoice.public_token;
+    }
+    setReadOnly(status !== 'draft');
+  }
+
+  function loadClients(selectedId) {
+    return CGAdmin.fetchAdmin('/api/admin/clients').then(function (data) {
+      clientSelect.innerHTML = (data.clients || []).map(function (c) {
+        return '<option value="' + c.id + '">' + CGAdmin.escapeHtml(c.name) + ' — ' + CGAdmin.escapeHtml(c.email) + '</option>';
+      }).join('');
+      if (selectedId) clientSelect.value = selectedId;
+    });
+  }
+
+  function loadInvoice() {
+    return CGAdmin.fetchAdmin('/api/admin/invoices/' + invoiceId).then(function (data) {
+      var invoice = data.invoice;
+      document.getElementById('pageTitle').textContent = invoice.number;
+      document.getElementById('currency').value = invoice.currency;
+      document.getElementById('dueDate').value = invoice.due_date ? invoice.due_date.slice(0, 10) : '';
+      document.getElementById('taxRate').value = invoice.tax_rate_percent;
+      document.getElementById('notes').value = invoice.notes || '';
+      lineItems.innerHTML = '';
+      (data.items || []).forEach(addRow);
+      if (lineItems.children.length === 0) addRow();
+      return loadClients(invoice.client_id).then(function () {
+        applyStatusUI(invoice);
+        recalc();
+      });
+    });
+  }
+
+  function collectPayload() {
+    var items = readItems();
+    return {
+      clientId: clientSelect.value,
+      currency: document.getElementById('currency').value,
+      taxRatePercent: parseFloat(document.getElementById('taxRate').value) || 0,
+      dueDate: document.getElementById('dueDate').value,
+      notes: document.getElementById('notes').value,
+      items: items
+    };
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var payload = collectPayload();
+    if (payload.items.length === 0) {
+      formStatus.style.color = 'var(--amber)';
+      formStatus.textContent = 'Add at least one line item.';
+      return;
+    }
+    var btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    formStatus.textContent = '';
+    var request = invoiceId
+      ? CGAdmin.fetchAdmin('/api/admin/invoices/' + invoiceId, { method: 'PATCH', body: JSON.stringify(payload) })
+      : CGAdmin.fetchAdmin('/api/admin/invoices', { method: 'POST', body: JSON.stringify(payload) });
+    request.then(function (data) {
+      formStatus.style.color = 'var(--green)';
+      formStatus.textContent = 'Saved.';
+      if (!invoiceId && data.id) window.location.href = '/admin/invoice?id=' + data.id;
+    }).catch(function (err) {
+      formStatus.style.color = 'var(--amber)';
+      formStatus.textContent = err.message;
+    }).finally(function () {
+      btn.disabled = false;
+    });
+  });
+
+  document.getElementById('sendBtn').addEventListener('click', function () {
+    var btn = this;
+    btn.disabled = true;
+    formStatus.textContent = '';
+    CGAdmin.fetchAdmin('/api/admin/invoices/' + invoiceId + '/send', { method: 'POST' }).then(function () {
+      formStatus.style.color = 'var(--green)';
+      formStatus.textContent = 'Sent.';
+      return loadInvoice();
+    }).catch(function (err) {
+      formStatus.style.color = 'var(--amber)';
+      formStatus.textContent = err.message;
+    }).finally(function () {
+      btn.disabled = false;
+    });
+  });
+
+  document.getElementById('voidBtn').addEventListener('click', function () {
+    var btn = this;
+    btn.disabled = true;
+    formStatus.textContent = '';
+    CGAdmin.fetchAdmin('/api/admin/invoices/' + invoiceId + '/void', { method: 'POST' }).then(function () {
+      formStatus.style.color = 'var(--green)';
+      formStatus.textContent = 'Voided.';
+      return loadInvoice();
+    }).catch(function (err) {
+      formStatus.style.color = 'var(--amber)';
+      formStatus.textContent = err.message;
+    }).finally(function () {
+      btn.disabled = false;
+    });
+  });
+
+  if (invoiceId) {
+    loadInvoice().catch(function (err) {
+      formStatus.style.color = 'var(--amber)';
+      formStatus.textContent = err.message;
+    });
+  } else {
+    loadClients();
+    addRow();
+    recalc();
+  }
+})();
+</script>
+</body>
+</html>

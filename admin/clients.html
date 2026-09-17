@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clients | Computer Geeks Admin</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#05100B">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/admin.css">
+</head>
+<body>
+<header class="masthead admin-bar">
+  <div class="wrap bar">
+    <a class="brand" href="/">COMPUTER <span>GEEKS</span></a>
+    <nav class="tools">
+      <a class="link" href="/admin">Invoices</a>
+      <a class="link" href="/admin/clients" aria-current="page">Clients</a>
+      <a class="link" href="#" id="logoutBtn">Log out</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="admin-main">
+  <div class="wrap">
+    <div class="admin-head"><h1>Clients</h1></div>
+
+    <div class="two-col" style="align-items:start">
+      <div class="admin-table">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+          <tbody id="clientRows"></tbody>
+        </table>
+        <div id="emptyState" class="empty" hidden>No clients yet — add your first one.</div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:14px">Add client</h3>
+        <form id="clientForm">
+          <div class="field"><label for="name">Name</label><input id="name" name="name" required></div>
+          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required></div>
+          <div class="field"><label for="phone">Phone</label><input id="phone" name="phone"></div>
+          <div class="field"><label for="address">Billing address</label><textarea id="address" name="address"></textarea></div>
+          <button class="btn btn-go" type="submit">Add client</button>
+          <p id="formStatus" role="status" style="margin:14px 0 0;font-size:.92rem"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/assets/admin.js"></script>
+<script>
+(function () {
+  var rows = document.getElementById('clientRows');
+  var empty = document.getElementById('emptyState');
+  var form = document.getElementById('clientForm');
+  var status = document.getElementById('formStatus');
+
+  function loadClients() {
+    CGAdmin.fetchAdmin('/api/admin/clients').then(function (data) {
+      var clients = data.clients || [];
+      empty.hidden = clients.length !== 0;
+      rows.innerHTML = clients.map(function (c) {
+        return '<tr><td>' + CGAdmin.escapeHtml(c.name) + '</td><td>' + CGAdmin.escapeHtml(c.email) + '</td><td>' + CGAdmin.escapeHtml(c.phone || '—') + '</td></tr>';
+      }).join('');
+    }).catch(function (err) {
+      empty.hidden = false;
+      empty.textContent = err.message;
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    status.textContent = '';
+    CGAdmin.fetchAdmin('/api/admin/clients', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value
+      })
+    }).then(function () {
+      form.reset();
+      status.style.color = 'var(--green)';
+      status.textContent = 'Client added.';
+      loadClients();
+    }).catch(function (err) {
+      status.style.color = 'var(--amber)';
+      status.textContent = err.message;
+    }).finally(function () {
+      btn.disabled = false;
+    });
+  });
+
+  loadClients();
+})();
+</script>
+</body>
+</html>

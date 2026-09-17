@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Login | Computer Geeks</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#05100B">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/admin.css">
+</head>
+<body>
+<main id="main">
+  <div class="wrap">
+    <div class="card login-card">
+      <a class="brand" href="/" style="margin-bottom:22px;display:inline-flex">COMPUTER <span>GEEKS</span></a>
+      <h3 style="margin-bottom:16px">Admin login</h3>
+      <form id="loginForm">
+        <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
+        <button class="btn btn-go" type="submit" style="width:100%">Log in</button>
+        <p id="loginStatus" role="status" style="margin:14px 0 0;font-size:.92rem"></p>
+      </form>
+    </div>
+  </div>
+</main>
+<script>
+(function () {
+  var form = document.getElementById('loginForm');
+  var status = document.getElementById('loginStatus');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    status.style.color = 'var(--muted)';
+    status.textContent = 'Checking…';
+    fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: document.getElementById('password').value })
+    }).then(function (res) {
+      if (res.ok) {
+        window.location.href = '/admin';
+        return;
+      }
+      return res.json().then(function (data) {
+        status.style.color = 'var(--amber)';
+        status.textContent = (data && data.error) || 'Login failed.';
+      });
+    }).catch(function () {
+      status.style.color = 'var(--amber)';
+      status.textContent = 'Something went wrong. Try again.';
+    }).finally(function () {
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>

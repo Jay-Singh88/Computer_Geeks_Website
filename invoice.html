@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice | Computer Geeks</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#05100B">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+  .invoice-card{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:36px;max-width:720px;margin:48px auto}
+  .invoice-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:20px;flex-wrap:wrap}
+  .invoice-head h1{font-size:1.6rem;margin-bottom:6px}
+  .invoice-meta{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:26px;font-size:.94rem}
+  .invoice-meta dt{color:var(--muted);font-size:.85rem}
+  .invoice-meta dd{margin:2px 0 0}
+  .invoice-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+  .invoice-table th,.invoice-table td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+  .invoice-table th{color:var(--muted);font-size:.85rem;font-weight:500}
+  .invoice-totals{max-width:280px;margin-left:auto;font-size:.95rem}
+  .invoice-totals .row{display:flex;justify-content:space-between;padding:5px 0;color:var(--muted)}
+  .invoice-totals .row.total{color:var(--bone);font-weight:700;font-size:1.25rem;border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+  .pay-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .invoice-notes{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  @media print{
+    .masthead, footer, .pay-actions, .skip{display:none!important}
+    body{background:#fff;color:#000}
+    .invoice-card{border:none;background:#fff;margin:0;padding:0;max-width:none}
+    a{color:#000;text-decoration:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="wrap bar">
+    <a class="brand" href="/">COMPUTER <span>GEEKS</span></a>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <div id="loading" class="invoice-card"><p style="margin:0">Loading invoice…</p></div>
+    <div id="invoiceCard" class="invoice-card" hidden></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <a class="brand" href="/" style="margin-bottom:10px">COMPUTER <span>GEEKS</span></a>
+      <div>Remote IT automation, cyber security and support — encrypted sessions, no site visits.</div>
+      <div style="margin-top:10px">© <span id="yr">2026</span> Computer Geeks.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var token = new URLSearchParams(location.search).get('t');
+  var justPaid = new URLSearchParams(location.search).get('paid') === '1';
+  var loading = document.getElementById('loading');
+  var card = document.getElementById('invoiceCard');
+
+  var ESCAPE_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  function esc(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) { return ESCAPE_MAP[c]; });
+  }
+
+  function money(cents, currency) {
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency || 'INR' }).format((cents || 0) / 100);
+  }
+  function dateStr(value) {
+    if (!value) return '—';
+    return new Date(value).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function statusLine(invoice) {
+    if (invoice.status === 'paid') return '<span style="color:var(--green);font-weight:600">Paid' + (invoice.paidAt ? ' on ' + dateStr(invoice.paidAt) : '') + '</span>';
+    if (invoice.status === 'void') return '<span style="color:var(--muted);font-weight:600">Voided</span>';
+    if (invoice.isOverdue) return '<span style="color:var(--amber);font-weight:600">Overdue — due ' + dateStr(invoice.dueDate) + '</span>';
+    return '<span style="color:var(--muted)">Due ' + dateStr(invoice.dueDate) + '</span>';
+  }
+
+  function render(invoice) {
+    var itemsHtml = invoice.items.map(function (item) {
+      return '<tr><td>' + esc(item.description) + '</td><td>' + esc(item.quantity) + '</td><td>' + money(item.unitPriceCents, invoice.currency) + '</td><td>' + money(item.amountCents, invoice.currency) + '</td></tr>';
+    }).join('');
+
+    var payButton = (invoice.status === 'sent')
+      ? '<button class="btn btn-go" id="payBtn">Pay now — ' + money(invoice.totalCents, invoice.currency) + '</button>'
+      : '';
+
+    card.innerHTML =
+      '<div class="invoice-head">' +
+        '<div><h1>Invoice ' + esc(invoice.number) + '</h1>' + statusLine(invoice) + '</div>' +
+        '<div style="text-align:right"><strong style="font-family:\'Space Grotesk\',sans-serif;font-size:1.6rem">' + money(invoice.totalCents, invoice.currency) + '</strong></div>' +
+      '</div>' +
+      '<dl class="invoice-meta">' +
+        '<div><dt>Billed to</dt><dd>' + esc(invoice.client.name) + '<br>' + esc(invoice.client.email) + '</dd></div>' +
+        '<div><dt>Issued</dt><dd>' + dateStr(invoice.issuedAt) + '</dd></div>' +
+      '</dl>' +
+      '<table class="invoice-table"><thead><tr><th>Description</th><th>Qty</th><th>Unit price</th><th>Amount</th></tr></thead><tbody>' + itemsHtml + '</tbody></table>' +
+      '<div class="invoice-totals">' +
+        '<div class="row"><span>Subtotal</span><span>' + money(invoice.subtotalCents, invoice.currency) + '</span></div>' +
+        '<div class="row"><span>Tax (' + invoice.taxRatePercent + '%)</span><span>' + money(invoice.taxCents, invoice.currency) + '</span></div>' +
+        '<div class="row total"><span>Total</span><span>' + money(invoice.totalCents, invoice.currency) + '</span></div>' +
+      '</div>' +
+      (invoice.notes ? '<div class="invoice-notes">' + esc(invoice.notes).replace(/\n/g, '<br>') + '</div>' : '') +
+      '<div class="pay-actions">' + payButton + '<button class="btn btn-ghost" onclick="window.print()">Download PDF</button></div>' +
+      '<p id="payStatus" role="status" style="margin-top:14px;font-size:.9rem"></p>';
+
+    var payBtn = document.getElementById('payBtn');
+    if (payBtn) {
+      payBtn.addEventListener('click', function () {
+        payBtn.disabled = true;
+        var payStatus = document.getElementById('payStatus');
+        payStatus.textContent = 'Redirecting to secure checkout…';
+        fetch('/api/invoices/' + token + '/checkout', { method: 'POST' })
+          .then(function (res) { return res.json().then(function (data) { if (!res.ok) throw new Error(data.error || 'Could not start checkout'); return data; }); })
+          .then(function (data) { window.location.href = data.url; })
+          .catch(function (err) {
+            payStatus.style.color = 'var(--amber)';
+            payStatus.textContent = err.message;
+            payBtn.disabled = false;
+          });
+      });
+    }
+  }
+
+  function load(attemptsLeft) {
+    fetch('/api/invoices/' + token).then(function (res) {
+      return res.json().then(function (data) { if (!res.ok) throw new Error(data.error || 'Invoice not found'); return data; });
+    }).then(function (invoice) {
+      loading.hidden = true;
+      card.hidden = false;
+      render(invoice);
+      // Right after a Stripe redirect the webhook may not have landed yet — poll briefly.
+      if (justPaid && invoice.status !== 'paid' && attemptsLeft > 0) {
+        setTimeout(function () { load(attemptsLeft - 1); }, 2000);
+      }
+    }).catch(function (err) {
+      loading.textContent = err.message;
+    });
+  }
+
+  if (!token) {
+    loading.textContent = 'No invoice specified.';
+  } else {
+    load(justPaid ? 5 : 0);
+  }
+})();
+</script>
+</body>
+</html>
