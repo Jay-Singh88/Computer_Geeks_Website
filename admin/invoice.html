@@ -57,7 +57,8 @@
       </div>
 
       <label>Line items</label>
-      <div class="line-item-head"><span>Description</span><span>Qty</span><span>Unit price</span><span></span></div>
+      <p style="margin:0 0 10px;font-size:.85rem;color:var(--muted)">Pick a service to auto-fill its description and price (reference prices are in INR — adjust if billing in another currency), or choose "Other" to write your own.</p>
+      <div class="line-item-head"><span>Service</span><span>Qty</span><span>Unit price</span><span></span></div>
       <div class="line-items" id="lineItems"></div>
       <button type="button" class="btn btn-ghost" id="addLine">+ Add line item</button>
 
@@ -91,18 +92,43 @@
   var form = document.getElementById('invoiceForm');
   var formStatus = document.getElementById('formStatus');
 
+  var SERVICE_CATALOG = [
+    { label: 'Remote support session — ₹450/hr', description: 'Remote support session', unitPrice: 450 },
+    { label: 'Home Guard — cyber security, per PC — ₹299/mo', description: 'Home Guard — cyber security monitoring (per PC, monthly)', unitPrice: 299 },
+    { label: 'Business Shield — cyber security, per 3 PCs — ₹799/mo', description: 'Business Shield — cyber security monitoring (per 3 PCs, monthly)', unitPrice: 799 },
+    { label: 'Starter site — website build — ₹18,000', description: 'Starter site — website design & build', unitPrice: 18000 },
+    { label: 'Business site — website build — ₹40,000', description: 'Business site — website design & build', unitPrice: 40000 },
+    { label: 'Online store — website build — ₹70,000', description: 'Online store — e-commerce website build', unitPrice: 70000 },
+    { label: 'Local SEO care — ₹4,999/mo', description: 'Local SEO & Google Business care (monthly)', unitPrice: 4999 },
+    { label: 'Automation build & setup — ₹450/hr', description: 'Automation build & setup', unitPrice: 450 },
+    { label: 'Automation care plan — ₹1,499/mo', description: 'Automation care plan — monitoring, tweaks & support (monthly)', unitPrice: 1499 }
+  ];
+
   function rowTemplate(item) {
     item = item || { description: '', quantity: 1, unitPriceCents: 0 };
     var row = document.createElement('div');
     row.className = 'line-item-row';
+    var serviceOptions = SERVICE_CATALOG.map(function (s, i) {
+      return '<option value="' + i + '">' + CGAdmin.escapeHtml(s.label) + '</option>';
+    }).join('');
     row.innerHTML =
-      '<input class="li-desc" placeholder="What did you do?" value="' + CGAdmin.escapeHtml(item.description || '') + '">' +
+      '<div class="li-desc-wrap">' +
+        '<select class="li-service"><option value="other" selected>Other — describe below</option>' + serviceOptions + '</select>' +
+        '<input class="li-desc" placeholder="What did you do?" value="' + CGAdmin.escapeHtml(item.description || '') + '">' +
+      '</div>' +
       '<input class="li-qty" type="number" min="0.01" step="0.01" value="' + (item.quantity || 1) + '">' +
       '<input class="li-price" type="number" min="0" step="0.01" value="' + ((item.unitPriceCents || 0) / 100) + '">' +
       '<button type="button" class="remove" aria-label="Remove line">×</button>';
     row.querySelector('.remove').addEventListener('click', function () { row.remove(); recalc(); });
     row.querySelector('.li-qty').addEventListener('input', recalc);
     row.querySelector('.li-price').addEventListener('input', recalc);
+    row.querySelector('.li-service').addEventListener('change', function (e) {
+      if (e.target.value === 'other') return;
+      var svc = SERVICE_CATALOG[Number(e.target.value)];
+      row.querySelector('.li-desc').value = svc.description;
+      row.querySelector('.li-price').value = svc.unitPrice;
+      recalc();
+    });
     return row;
   }
 
