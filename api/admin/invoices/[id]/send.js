@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
 
   const { id } = req.query;
   const { rows } = await sql`
-    SELECT i.*, c.email AS client_email
+    SELECT i.*, c.email AS client_email, c.name AS client_name
     FROM invoices i JOIN clients c ON c.id = i.client_id
     WHERE i.id = ${id}
   `;
@@ -33,17 +33,42 @@ module.exports = async (req, res) => {
     await sql`UPDATE invoices SET status = 'sent', issued_at = now(), updated_at = now() WHERE id = ${id}`;
   }
 
-  const totalFormatted = new Intl.NumberFormat('en-IN', {
+  const { rows: itemRows } = await sql`
+    SELECT description, quantity, unit_price_cents, amount_cents
+    FROM invoice_items WHERE invoice_id = ${id} ORDER BY sort_order, id
+  `;
+
+  const money = (cents) => new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: invoice.currency
-  }).format(invoice.total_cents / 100);
+  }).format(cents / 100);
+
+  const items = itemRows.map((item) => ({
+    description: item.description,
+    quantity: Number(item.quantity),
+    unitPriceFormatted: money(item.unit_price_cents),
+    amountFormatted: money(item.amount_cents)
+  }));
+
+  const dueDateFormatted = new Date(invoice.due_date).toLocaleDateString('en-IN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Asia/Kolkata'
+  });
 
   try {
     await sendInvoiceEmail({
       to: invoice.client_email,
+      clientName: invoice.client_name,
       invoiceNumber: invoice.number,
-      totalFormatted,
-      dueDate: invoice.due_date,
+      items,
+      subtotalFormatted: money(invoice.subtotal_cents),
+      taxFormatted: invoice.tax_cents > 0 ? money(invoice.tax_cents) : null,
+      taxRatePercent: invoice.tax_rate_percent,
+      totalFormatted: money(invoice.total_cents),
+      dueDateFormatted,
+      notes: invoice.notes,
       payUrl: `${process.env.SITE_URL}/invoice?t=${invoice.public_token}`,
       businessName: 'Computer Geeks'
     });
