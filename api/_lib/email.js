@@ -29,7 +29,7 @@ async function sendInvoiceEmail({
   const html = `
   <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#0b1a13">
     <div style="padding:4px 0 20px;border-bottom:2px solid #2FE07E;margin-bottom:24px">
-      <span style="font-size:1.1rem;font-weight:700;letter-spacing:.02em">COMPUTER <span style="color:#2FE07E">GEEKS</span></span>
+      <img src="${process.env.SITE_URL}/assets/images/logo.png" alt="${esc(name)}" height="36" style="height:36px;width:auto;display:block">
     </div>
 
     <p style="margin:0 0 6px;font-size:1rem">Hi ${esc(clientName) || 'there'},</p>

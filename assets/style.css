@@ -38,8 +38,10 @@ img{max-width:100%;display:block}
 /* ---------- header ---------- */
 .masthead{position:sticky;top:0;z-index:50;background:rgba(5,16,11,.92);backdrop-filter:blur(9px);border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;gap:26px;height:66px}
-.brand{display:flex;align-items:baseline;gap:9px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.06rem;color:var(--bone);text-decoration:none;letter-spacing:-.02em;white-space:nowrap}
+.brand{display:flex;align-items:center;gap:9px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.06rem;color:var(--bone);text-decoration:none;letter-spacing:-.02em;white-space:nowrap}
 .brand span{color:var(--green)}
+.brand-logo{height:34px;width:auto;display:block}
+.brand-logo-footer{height:42px}
 .nav{display:flex;gap:22px;margin-left:auto;align-items:center}
 .nav a{color:var(--muted);text-decoration:none;font-size:.93rem;font-weight:500}
 .nav a:hover{color:var(--bone)}
