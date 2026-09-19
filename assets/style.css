@@ -180,6 +180,20 @@ details p{padding-bottom:6px;color:var(--muted);font-size:.97rem}
 .preview-card p{font-size:.95rem;color:var(--muted);flex:1}
 .preview-card .more{font-weight:600;font-size:.92rem;display:inline-flex;align-items:center;gap:6px}
 
+/* ---------- blog ---------- */
+.post-date{display:block;font:400 .8rem/1 "IBM Plex Mono",monospace;color:var(--muted);margin-bottom:10px}
+.article{max-width:72ch}
+.article .meta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;color:var(--muted);font:400 .88rem/1 "IBM Plex Mono",monospace;margin-bottom:8px}
+.article .lede{font-size:1.1rem;color:#C3D6CB}
+.article h2{margin-top:1.7em}
+.article h3{margin-top:1.4em}
+.article ul,.article ol{color:var(--muted);padding-left:1.3em;margin:0 0 1.1em}
+.article li{margin-bottom:.5em;max-width:64ch}
+.article .cta-box{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:26px;margin-top:2.2em}
+.article .cta-box p{margin-bottom:14px;color:var(--bone)}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:.92rem;color:var(--green-dim);text-decoration:none}
+.back-link:hover{color:var(--green)}
+
 /* ---------- contact ---------- */
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px}
 .detail{border-top:1px solid var(--line);padding:16px 0;display:grid;grid-template-columns:118px 1fr;gap:14px;font-size:.97rem}
