@@ -183,35 +183,70 @@
 
 <script type="application/ld+json">
 {
-  "@context":"https://schema.org",
-  "@graph":[
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@type":"ProfessionalService",
-      "@id":"https://www.thegeeks.co.in/#business",
-      "name":"Computer Geeks",
-      "description":"100% remote business automation, managed cyber security monitoring, and website design, serving businesses across India.",
-      "url":"https://www.thegeeks.co.in/",
-      "telephone":"+64-22-409-8840",
-      "email":"jay@thegeeks.co.nz",
-      "priceRange":"$$",
-      "areaServed":{"@type":"Country","name":"India"},
-      "hasOfferCatalog":{
-        "@type":"OfferCatalog","name":"Services",
-        "itemListElement":[
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Business process automation","description":"Automating invoicing, quoting, bookings, reporting and stock for small businesses."}},
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Managed cyber security monitoring","description":"24/7 threat monitoring, patching, backup verification and incident response, delivered remotely."}},
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Website design and local SEO","description":"Fast websites built for search, with Google Business Profile and local listings management."}},
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Remote IT support","description":"On-demand remote troubleshooting: virus removal, PC speed-ups, printer and network fixes, data recovery and staff training."}}
+      "@type": "ProfessionalService",
+      "@id": "https://www.thegeeks.co.in/#business",
+      "name": "Computer Geeks",
+      "description": "100% remote business automation, managed cyber security monitoring, and website design, serving businesses across India.",
+      "url": "https://www.thegeeks.co.in/",
+      "logo": "https://www.thegeeks.co.in/assets/images/logo-square.png",
+      "telephone": "+64-22-409-8840",
+      "email": "jay@thegeeks.co.nz",
+      "priceRange": "$$",
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Business process automation",
+              "description": "Automating invoicing, quoting, bookings, reporting and stock for small businesses."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Managed cyber security monitoring",
+              "description": "24/7 threat monitoring, patching, backup verification and incident response, delivered remotely."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Website design and local SEO",
+              "description": "Fast websites built for search, with Google Business Profile and local listings management."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Remote IT support",
+              "description": "On-demand remote troubleshooting: virus removal, PC speed-ups, printer and network fixes, data recovery and staff training."
+            }
+          }
         ]
       }
     },
     {
-      "@type":"WebSite",
-      "@id":"https://www.thegeeks.co.in/#website",
-      "url":"https://www.thegeeks.co.in/",
-      "name":"Computer Geeks",
-      "publisher":{"@id":"https://www.thegeeks.co.in/#business"},
-      "inLanguage":"en-IN"
+      "@type": "WebSite",
+      "@id": "https://www.thegeeks.co.in/#website",
+      "url": "https://www.thegeeks.co.in/",
+      "name": "Computer Geeks",
+      "publisher": {
+        "@id": "https://www.thegeeks.co.in/#business"
+      },
+      "inLanguage": "en-IN"
     }
   ]
 }
