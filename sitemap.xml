@@ -50,7 +50,7 @@
   </url>
   <url>
     <loc>https://www.thegeeks.co.in/blog</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-11-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -63,6 +63,12 @@
   <url>
     <loc>https://www.thegeeks.co.in/blog/repetitive-tasks-to-automate</loc>
     <lastmod>2026-09-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.thegeeks.co.in/blog/fake-upi-payment-scams</loc>
+    <lastmod>2026-11-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
