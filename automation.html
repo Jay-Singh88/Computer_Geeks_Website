@@ -170,13 +170,52 @@
 
 <script type="application/ld+json">
 {
-  "@context":"https://schema.org",
-  "@type":["LocalBusiness","ComputerStore"],
-  "@id":"https://www.thegeeks.co.in/#business",
-  "name":"Computer Geeks",
-  "url":"https://www.thegeeks.co.in/",
-  "telephone":"+64-22-409-8840",
-  "email":"jay@thegeeks.co.nz"
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.thegeeks.co.in/#business",
+      "name": "Computer Geeks",
+      "url": "https://www.thegeeks.co.in/",
+      "telephone": "+64-22-409-8840",
+      "email": "jay@thegeeks.co.nz",
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.thegeeks.co.in/automation#service",
+      "name": "Remote Business Automation Services",
+      "description": "Business automation services for small businesses in India — invoicing, receipts, bookings, stock and reporting wired into the tools you already use, 100% remote, with a free automation audit to start.",
+      "url": "https://www.thegeeks.co.in/automation",
+      "provider": {
+        "@id": "https://www.thegeeks.co.in/#business"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.thegeeks.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Remote Business Automation Services",
+          "item": "https://www.thegeeks.co.in/automation"
+        }
+      ]
+    }
+  ]
 }
 </script>
 <script src="/assets/main.js"></script>

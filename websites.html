@@ -233,22 +233,86 @@
 
 <script type="application/ld+json">
 {
-  "@context":"https://schema.org",
-  "@type":["LocalBusiness","ComputerStore"],
-  "@id":"https://www.thegeeks.co.in/#business",
-  "name":"Computer Geeks",
-  "url":"https://www.thegeeks.co.in/",
-  "telephone":"+64-22-409-8840",
-  "email":"jay@thegeeks.co.nz",
-  "hasOfferCatalog":{
-    "@type":"OfferCatalog","name":"Website &amp; SEO plans",
-    "itemListElement":[
-      {"@type":"Offer","name":"Starter site","price":"18000","priceCurrency":"INR","description":"1-5 page mobile-first business website with contact form and Google Business Profile setup."},
-      {"@type":"Offer","name":"Business site","price":"40000","priceCurrency":"INR","description":"Up to 15 page website with blog, online booking and on-page SEO."},
-      {"@type":"Offer","name":"Online store","price":"70000","priceCurrency":"INR","description":"E-commerce website with product catalogue, payments and order management."},
-      {"@type":"Offer","name":"Local SEO care","price":"4999","priceCurrency":"INR","description":"Monthly Google Business Profile management, listings and reviews, billed per month."}
-    ]
-  }
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.thegeeks.co.in/#business",
+      "name": "Computer Geeks",
+      "url": "https://www.thegeeks.co.in/",
+      "telephone": "+64-22-409-8840",
+      "email": "jay@thegeeks.co.nz",
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.thegeeks.co.in/websites#service",
+      "name": "Website Design & SEO Services",
+      "description": "Website design and SEO services in India, from ₹18,000. Fast, mobile-first websites built and managed remotely, plus Google Business Profile and local SEO from ₹4,999/month so the right customers actually find you.",
+      "url": "https://www.thegeeks.co.in/websites",
+      "provider": {
+        "@id": "https://www.thegeeks.co.in/#business"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Website &amp; SEO plans",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "name": "Starter site",
+            "price": "18000",
+            "priceCurrency": "INR",
+            "description": "1-5 page mobile-first business website with contact form and Google Business Profile setup."
+          },
+          {
+            "@type": "Offer",
+            "name": "Business site",
+            "price": "40000",
+            "priceCurrency": "INR",
+            "description": "Up to 15 page website with blog, online booking and on-page SEO."
+          },
+          {
+            "@type": "Offer",
+            "name": "Online store",
+            "price": "70000",
+            "priceCurrency": "INR",
+            "description": "E-commerce website with product catalogue, payments and order management."
+          },
+          {
+            "@type": "Offer",
+            "name": "Local SEO care",
+            "price": "4999",
+            "priceCurrency": "INR",
+            "description": "Monthly Google Business Profile management, listings and reviews, billed per month."
+          }
+        ]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.thegeeks.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Website Design & SEO Services",
+          "item": "https://www.thegeeks.co.in/websites"
+        }
+      ]
+    }
+  ]
 }
 </script>
 <script src="/assets/main.js"></script>

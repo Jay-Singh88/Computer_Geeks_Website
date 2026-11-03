@@ -201,20 +201,72 @@
 
 <script type="application/ld+json">
 {
-  "@context":"https://schema.org",
-  "@type":["LocalBusiness","ComputerStore"],
-  "@id":"https://www.thegeeks.co.in/#business",
-  "name":"Computer Geeks",
-  "url":"https://www.thegeeks.co.in/",
-  "telephone":"+64-22-409-8840",
-  "email":"jay@thegeeks.co.nz",
-  "hasOfferCatalog":{
-    "@type":"OfferCatalog","name":"Cyber Secure plans",
-    "itemListElement":[
-      {"@type":"Offer","name":"Home Guard","price":"299","priceCurrency":"INR","description":"Personal and family remote cyber protection, billed per PC per month."},
-      {"@type":"Offer","name":"Business Shield","price":"799","priceCurrency":"INR","description":"Remote cyber protection for small business workstations, billed at ₹799 per 3 PCs per month."}
-    ]
-  }
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.thegeeks.co.in/#business",
+      "name": "Computer Geeks",
+      "url": "https://www.thegeeks.co.in/",
+      "telephone": "+64-22-409-8840",
+      "email": "jay@thegeeks.co.nz",
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.thegeeks.co.in/security#service",
+      "name": "Cyber Security & Remote IT Monitoring Services",
+      "description": "Cyber security services in India: 24/7 automated threat monitoring, patching, backup verification and email security, delivered 100% remotely. Home Guard from ₹299/month, Business Shield from ₹799/3 PCs/month.",
+      "url": "https://www.thegeeks.co.in/security",
+      "provider": {
+        "@id": "https://www.thegeeks.co.in/#business"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Cyber Secure plans",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "name": "Home Guard",
+            "price": "299",
+            "priceCurrency": "INR",
+            "description": "Personal and family remote cyber protection, billed per PC per month."
+          },
+          {
+            "@type": "Offer",
+            "name": "Business Shield",
+            "price": "799",
+            "priceCurrency": "INR",
+            "description": "Remote cyber protection for small business workstations, billed at ₹799 per 3 PCs per month."
+          }
+        ]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.thegeeks.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cyber Security & Remote IT Monitoring Services",
+          "item": "https://www.thegeeks.co.in/security"
+        }
+      ]
+    }
+  ]
 }
 </script>
 <script src="/assets/main.js"></script>

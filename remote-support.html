@@ -194,19 +194,65 @@
 
 <script type="application/ld+json">
 {
-  "@context":"https://schema.org",
-  "@type":["LocalBusiness","ComputerStore"],
-  "@id":"https://www.thegeeks.co.in/#business",
-  "name":"Computer Geeks",
-  "url":"https://www.thegeeks.co.in/",
-  "telephone":"+64-22-409-8840",
-  "email":"jay@thegeeks.co.nz",
-  "hasOfferCatalog":{
-    "@type":"OfferCatalog","name":"Remote support",
-    "itemListElement":[
-      {"@type":"Offer","name":"Remote support session","price":"450","priceCurrency":"INR","description":"On-demand remote IT support billed per hour, covering virus removal, speed-ups, setup, printer and network fixes, data recovery and staff training."}
-    ]
-  }
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.thegeeks.co.in/#business",
+      "name": "Computer Geeks",
+      "url": "https://www.thegeeks.co.in/",
+      "telephone": "+64-22-409-8840",
+      "email": "jay@thegeeks.co.nz",
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.thegeeks.co.in/remote-support#service",
+      "name": "Remote IT Support Services",
+      "description": "On-demand remote IT support in India: virus removal, PC speed-ups, printer & network fixes, data recovery, software setup and staff tech training — all over an encrypted remote session. ₹450/hour.",
+      "url": "https://www.thegeeks.co.in/remote-support",
+      "provider": {
+        "@id": "https://www.thegeeks.co.in/#business"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Remote support",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "name": "Remote support session",
+            "price": "450",
+            "priceCurrency": "INR",
+            "description": "On-demand remote IT support billed per hour, covering virus removal, speed-ups, setup, printer and network fixes, data recovery and staff training."
+          }
+        ]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.thegeeks.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Remote IT Support Services",
+          "item": "https://www.thegeeks.co.in/remote-support"
+        }
+      ]
+    }
+  ]
 }
 </script>
 <script src="/assets/main.js"></script>
